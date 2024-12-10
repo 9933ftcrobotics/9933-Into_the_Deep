@@ -62,8 +62,8 @@ public class ArmSubsystem extends SubsystemBase {
         double tolerence = 4;   // allowed maximum error
         // perform the control loop
         //if (Math.abs(Pos-arm.getCurrentPosition()) > tolerence) {
-            arm.set(pid.calculate(arm.getCurrentPosition(),Pos) + ff);
-            upArmInPos = false;
+        arm.set(pid.calculate(arm.getCurrentPosition(),Pos) + ff);
+        upArmInPos = false;
         /*} else {
             arm.stopMotor(); // stop the motor
             upArmInPos = true;
@@ -194,7 +194,7 @@ public class ArmSubsystem extends SubsystemBase {
         public boolean run(@NonNull TelemetryPacket packet) {
             setArm(DriveConstants.armSampleScoreHigh + 30);
             Run = Run + 1;
-            return !upArmInPos && Run < 60; //Time off?
+            return !upArmInPos && Run < 70; //Time off?
         }
     }
     public Action upHigh() {
