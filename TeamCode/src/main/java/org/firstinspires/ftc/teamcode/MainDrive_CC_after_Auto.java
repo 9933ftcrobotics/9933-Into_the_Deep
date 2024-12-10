@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 @TeleOp
-public class MainDrive_CC extends LinearOpMode {
+public class MainDrive_CC_after_Auto extends LinearOpMode {
     boolean wristCenter = true;
 
 
@@ -82,9 +82,8 @@ public class MainDrive_CC extends LinearOpMode {
 
         );
 
-        drive.setReadType();
-        arm.resetArm();
-        arm.resetOutArm();
+        drive.setReadType(); //Set Husky Cam to color mode
+        //arm.resetOutArm();
         rumble.reset();
 
 

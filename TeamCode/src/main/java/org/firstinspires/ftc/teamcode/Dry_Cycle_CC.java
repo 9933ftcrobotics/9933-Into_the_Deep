@@ -32,10 +32,12 @@ public class Dry_Cycle_CC extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
+//cycles = 100;
 
         ArmSubsystem_CC arm = new ArmSubsystem_CC(
                 new Motor(hardwareMap, "arm", Motor.GoBILDA.RPM_312),
-                new Motor(hardwareMap, "outArm", Motor.GoBILDA.RPM_312)
+                new Motor(hardwareMap, "outArm", Motor.GoBILDA.RPM_312),
+                new Motor(hardwareMap, "armEnc", Motor.GoBILDA.RPM_312)
         );
 
         ClawSubsystem claw = new ClawSubsystem(
