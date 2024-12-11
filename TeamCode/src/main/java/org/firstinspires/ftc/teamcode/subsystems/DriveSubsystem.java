@@ -70,6 +70,10 @@ public class DriveSubsystem extends SubsystemBase {
         drive = new MecanumDrive(false,
                 leftFront, rightFront, leftRear, rightRear
         );
+        leftFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
         this.leftFront = leftFront;
         this.rightFront = rightFront;

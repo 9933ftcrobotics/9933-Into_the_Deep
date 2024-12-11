@@ -183,7 +183,7 @@ public class ArmSubsystem_CC extends SubsystemBase {
     public String[] getArmTelemetry() {
         return new String[]{
                 ("Current Arm Motor Pos: " + String.valueOf(arm.getCurrentPosition())),
-                ("Current Arm Pos: " + String.valueOf(armEnc.getCurrentPosition()*motor_to_rev_ratio)),
+                ("Current Arm Pos: " + String.valueOf(armEnc.getCurrentPosition()/*motor_to_rev_ratio*/)),
                 ("Target Arm Pos: " + String.valueOf(ArmTarget)),
                 ("Current Out Arm Pos: " + String.valueOf(outArm.getCurrentPosition())),
                 ("Target Out Arm Pos: " + String.valueOf(OutTarget))
@@ -193,3 +193,11 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
 
 }
+
+/*
+Floor Pickup:
+arm encoder, 242
+out motor, 929
+
+
+*/
