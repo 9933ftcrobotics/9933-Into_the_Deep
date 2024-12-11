@@ -22,7 +22,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @Config
 @TeleOp
-@Disabled
+//@Disabled
 public class armTest extends OpMode {
     private PIDController controller;
     private PIDController outController;

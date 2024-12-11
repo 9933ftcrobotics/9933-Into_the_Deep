@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.DriveConstants;
@@ -43,7 +44,7 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
     public static int autoReqArmPos = 0, autoReqOutPos = 0;
 
-    double armInitDelay,PrevReqArmPos;
+    double armInitDelay,PrevArmPos;
     boolean arminitialized;
 
 
@@ -51,14 +52,15 @@ public class ArmSubsystem_CC extends SubsystemBase {
         arm.setInverted(false);
         armEnc.setInverted(true);
         outArm.setInverted(true);
+
+
         arminitialized = false;
         armInitDelay = 0;
-
         this.arm = arm;
         this.outArm = outArm;
         this.armEnc = armEnc;
-        //arm.resetEncoder();
-        //outArm.resetEncoder();
+        arm.resetEncoder();
+        outArm.resetEncoder();
         armPID = new PIDController(arm_p,arm_i,arm_d);
         outPID = new PIDController(out_p,out_i,out_d);
 
@@ -67,11 +69,23 @@ public class ArmSubsystem_CC extends SubsystemBase {
     public void setArms(int ReqArmTarget, int ReqOutTarget) {
         armCurrent = arm.getCurrentPosition();
         outCurrent = outArm.getCurrentPosition();
-
+        if (!arminitialized){
+            if ((PrevArmPos > armCurrent-5) && (PrevArmPos < armCurrent+5)) {
+                if(armInitDelay > 10){
+                    armOffset = armCurrent - (int)(armEnc.getCurrentPosition()*motor_to_rev_ratio);
+                    arminitialized = true;
+                }
+                else {armInitDelay++;}
+            }
+            else{
+                PrevArmPos = armCurrent;
+                armInitDelay = 0;
+            }
+        }
 
 
         if(outCurrent < 300) {
-            ArmTarget = ReqArmTarget;
+            ArmTarget = ReqArmTarget+armOffset;
         }
 
         if(Math.abs(armCurrent-ArmTarget)<300){
@@ -178,12 +192,20 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
 
     public void resetOutArm() {outArm.resetEncoder();}
-    public void resetArm() {arm.resetEncoder();armEnc.resetEncoder();}
+    public void resetArm() {
+        arm.resetEncoder();
+        armEnc.resetEncoder();
+    }
+    public void resetArmOffset(){
+        armOffset = 0;
+        arminitialized = false;
+    }
 
     public String[] getArmTelemetry() {
         return new String[]{
                 ("Current Arm Motor Pos: " + String.valueOf(arm.getCurrentPosition())),
-                ("Current Arm Pos: " + String.valueOf(armEnc.getCurrentPosition()/*motor_to_rev_ratio*/)),
+                ("Current Arm Pos: " + String.valueOf(armEnc.getCurrentPosition()*motor_to_rev_ratio)),
+                ("Arm Power: " + String.valueOf(arm.get())),
                 ("Target Arm Pos: " + String.valueOf(ArmTarget)),
                 ("Current Out Arm Pos: " + String.valueOf(outArm.getCurrentPosition())),
                 ("Target Out Arm Pos: " + String.valueOf(OutTarget))

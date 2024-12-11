@@ -29,10 +29,7 @@ public class MainDrive_CC extends LinearOpMode {
     // differences between them can be read here in the docs:
     // https://docs.ftclib.org/ftclib/features/drivebases#control-scheme
 
-    private static ElapsedTime timmer = new ElapsedTime();
     private static ElapsedTime rumble = new ElapsedTime();
-    private static ElapsedTime huskyTime = new ElapsedTime();
-    private static ElapsedTime reset = new ElapsedTime();
     boolean warning = false;
     boolean endGame = false;
 
@@ -85,6 +82,7 @@ public class MainDrive_CC extends LinearOpMode {
         drive.setReadType();
         arm.resetArm();
         arm.resetOutArm();
+        arm.resetArmOffset();
         rumble.reset();
 
 
@@ -131,31 +129,6 @@ public class MainDrive_CC extends LinearOpMode {
             if (!driver1.getButton(GamepadKeys.Button.LEFT_BUMPER) && !driver2.getButton(GamepadKeys.Button.LEFT_BUMPER) ) {
                 leftBumperPressed = false;
             }
-
-
-
-            /*
-            if (driver1.getButton(GamepadKeys.Button.Y) && YIsPressed == false || driver2.getButton(GamepadKeys.Button.Y) && YIsPressed == false) {
-                telemetry.addLine("Y is pressed");
-                if (sampleScoring == true) {
-                    sampleScoring = false;
-                    telemetry.addLine("sampleScoring is true. Changing to false");
-                } else if (sampleScoring == false) {
-                    sampleScoring = true;
-                    telemetry.addLine("sampleScoring is false. Changing to true");
-                }
-                YIsPressed = true;
-            }
-
-            if (!driver1.getButton(GamepadKeys.Button.Y) && !driver2.getButton(GamepadKeys.Button.Y) ) {
-                YIsPressed = false;
-            }*/
-
-
-
-
-
-
 
             if (driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.075) {
                 claw.grabberPlaceToPower(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
