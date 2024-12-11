@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.DriveConstants;
+import org.firstinspires.ftc.teamcode.RobotInfo;
 
 public class ArmSubsystem_CC extends SubsystemBase {
 
@@ -27,7 +28,6 @@ public class ArmSubsystem_CC extends SubsystemBase {
     public static int outCurrent;
     public static int armCurrent;
 
-    public static int armOffset;
 
     public static int ArmTarget = 0;
     public static int OutTarget = 0;
@@ -40,40 +40,37 @@ public class ArmSubsystem_CC extends SubsystemBase {
     public static double arm_p = 0.0125, arm_i = 0.06, arm_d = 0.00075;
     public static double arm_f = 0.08;
 
-    public static double out_p = 0.004, out_i = 0, out_d = 0;
+    public static double out_p = 0.006, out_i = 0, out_d = 0;
 
-    public static int autoReqArmPos = 0, autoReqOutPos = 0;
+    public static int ReqArmTarget = 0, ReqOutTarget = 0;
+
+    public static boolean AutoRunning;
 
     double armInitDelay,PrevArmPos;
-    boolean arminitialized;
+
 
 
     public ArmSubsystem_CC(Motor arm, Motor outArm, Motor armEnc) {
         arm.setInverted(false);
         armEnc.setInverted(true);
         outArm.setInverted(true);
-
-
-        arminitialized = false;
-        armInitDelay = 0;
         this.arm = arm;
         this.outArm = outArm;
         this.armEnc = armEnc;
-        arm.resetEncoder();
-        outArm.resetEncoder();
+
         armPID = new PIDController(arm_p,arm_i,arm_d);
         outPID = new PIDController(out_p,out_i,out_d);
 
     }
 
-    public void setArms(int ReqArmTarget, int ReqOutTarget) {
+    public void setArms() {
         armCurrent = arm.getCurrentPosition();
         outCurrent = outArm.getCurrentPosition();
-        if (!arminitialized){
+        if (!RobotInfo.arminitialized){
             if ((PrevArmPos > armCurrent-5) && (PrevArmPos < armCurrent+5)) {
                 if(armInitDelay > 10){
-                    armOffset = armCurrent - (int)(armEnc.getCurrentPosition()*motor_to_rev_ratio);
-                    arminitialized = true;
+                    RobotInfo.armOffset = armCurrent - (int)(armEnc.getCurrentPosition()*motor_to_rev_ratio);
+                    RobotInfo.arminitialized = true;
                 }
                 else {armInitDelay++;}
             }
@@ -85,7 +82,7 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
 
         if(outCurrent < 300) {
-            ArmTarget = ReqArmTarget+armOffset;
+            ArmTarget = ReqArmTarget+RobotInfo.armOffset;
         }
 
         if(Math.abs(armCurrent-ArmTarget)<300){
@@ -110,49 +107,66 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
 
     }
-    public void autoArms() {
-        armCurrent = arm.getCurrentPosition();
-        outCurrent = outArm.getCurrentPosition();
 
-        if(outCurrent < 300) {
-            ArmTarget = autoReqArmPos;
-        }
+  public Action setArmPosAction(int ReqArmTarget_In, int ReqOutTarget_In) {
 
-        if(Math.abs(armCurrent-ArmTarget)<300){
-            OutTarget = autoReqOutPos;
-        }
+      return new Action() {
+          int PrevArmPos, PrevOutArmPos,timeout_count;
+          @Override
+          public boolean run(@NonNull TelemetryPacket packet) {
 
-        armPID.setPID(arm_p,arm_i,arm_d);
+              ReqArmTarget = ReqArmTarget_In;
+              ReqOutTarget =ReqOutTarget_In;
+              //setArms();
+              boolean ArmInPos = false;
 
-        double armpid = armPID.calculate(armCurrent,ArmTarget);
-        double armff = Math.cos(Math.toRadians(ArmTarget / ticks_in_degree))*arm_f;
-
-        double power = armpid + armff;
-
-        power = clamp(power,-0.4,1);
-        arm.set(power);
-
-        outPID.setPID(out_p,out_i,out_d);
-
-        double outpid = outPID.calculate(outCurrent,OutTarget);
-        outpid = clamp(outpid,-0.65,0.65);
-        outArm.set(outpid);
+              if((arm.getCurrentPosition() < ReqArmTarget+20) && (arm.getCurrentPosition() > ReqArmTarget-20)){
 
 
+                  if((outArm.getCurrentPosition() < ReqOutTarget+50) && (outArm.getCurrentPosition() > ReqOutTarget-50)){
+                      ArmInPos = true;
+                  }
+              }
+              return !ArmInPos;
+          }
+      };
+  }
+
+
+    public Action setArmsAction() {
+
+        AutoRunning = true;
+        return new Action() {
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                setArms();
+
+                packet.put("Arm Pos", arm.getCurrentPosition());
+                packet.put("Arm Target Pos", ReqArmTarget);
+                packet.put("Out Pos", outArm.getCurrentPosition());
+                packet.put("Out Target Pos", ReqOutTarget);
+                packet.put("Initialized", RobotInfo.arminitialized);
+                packet.put("Offset", RobotInfo.armOffset);
+                packet.put("AutoRunning", AutoRunning);
+                if(!AutoRunning) {
+                    arm.set(0);
+                    outArm.set(0);
+                }
+                return AutoRunning;
+            }
+        };
     }
-    /*public class setAutoArms implements Action {
-        int Run = 0;
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            autoReqArmPos
-            return !upArmInPos && Run < 30;
-        }
-    }*/
-    public void setArm(int ReqArmPos) {
+public void setArmPositions(int ReqArmTarget_In, int ReqOutTarget_In){
+
+    ReqArmTarget = ReqArmTarget_In;
+    ReqOutTarget =ReqOutTarget_In;
+}
+    public void setArm() {
 
         armPID.setPID(arm_p, arm_i, arm_d);
         armCurrent = arm.getCurrentPosition();
-        ArmTarget = ReqArmPos;
+        ArmTarget = ReqArmTarget;
         double armpid = armPID.calculate(armCurrent, ArmTarget);
         double armff = Math.cos(Math.toRadians(ArmTarget / ticks_in_degree)) * arm_f;
 
@@ -163,10 +177,10 @@ public class ArmSubsystem_CC extends SubsystemBase {
         arm.set(power);
     }
 
-    public void setOutArm(int outPos) {
+    public void setOutArm() {
         outPID.setPID(out_p,out_i,out_d);
         outCurrent = outArm.getCurrentPosition();
-        OutTarget = outPos;
+        OutTarget = ReqOutTarget;
 
         double outpid = outPID.calculate(outCurrent,OutTarget);
         outpid = clamp(outpid,-0.65,0.65);
@@ -186,19 +200,23 @@ public class ArmSubsystem_CC extends SubsystemBase {
         armCurrent = arm.getCurrentPosition();
     }
 
-
-
-
-
-
     public void resetOutArm() {outArm.resetEncoder();}
     public void resetArm() {
         arm.resetEncoder();
         armEnc.resetEncoder();
     }
     public void resetArmOffset(){
-        armOffset = 0;
-        arminitialized = false;
+        RobotInfo.armOffset = 0;
+        RobotInfo.arminitialized = false;
+    }
+    public Action stopAuto(){
+        AutoRunning = false;
+        return stopAuto();
+    }
+
+    public Action startAuto(){
+        AutoRunning = true;
+        return startAuto();
     }
 
     public String[] getArmTelemetry() {

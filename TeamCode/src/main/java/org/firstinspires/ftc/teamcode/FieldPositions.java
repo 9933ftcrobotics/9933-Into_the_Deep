@@ -3,10 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
 @Config
-public class FeildPosition {
+public class FieldPositions {
     public static Pose2d prepToPickSecondSample = new Pose2d(27.75, 35.5,Math.toRadians(-26.5));
     public static Pose2d finishPickSecondSample = new Pose2d(32.75, 32.5,Math.toRadians(-26.5));
     public static Pose2d scoreSample = new Pose2d(51, 47,Math.toRadians(50));

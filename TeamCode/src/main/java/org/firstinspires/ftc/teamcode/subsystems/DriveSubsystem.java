@@ -252,7 +252,7 @@ public class DriveSubsystem extends SubsystemBase {
     public String[] getDriveTelemetry() {
         String[] telem = {
 
-                "Robot Angle: " + String.valueOf(imuAngle),
+                "Robot Angle: " + String.valueOf(imu.getRotation2d().getDegrees()),
                 "Robot Auto Offset Angle: " + String.valueOf(DriveConstants.angle),
                 "Left Odom Pod: " + String.valueOf(leftEncoder),
                 "Right Odom Pod: " + String.valueOf(rightEncoder),

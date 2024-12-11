@@ -1,31 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
+
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
-import org.firstinspires.ftc.teamcode.FeildPosition;
-
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Config
@@ -46,25 +36,25 @@ public class TestBlueLeft extends LinearOpMode {
         );
 
         Pose2d initialPose = new Pose2d(32, 62, Math.toRadians(-90));
-        Pose2d secondPos = new Pose2d(FeildPosition.scoreSample.position, FeildPosition.scoreSample.heading);
-        Pose2d thirdPos = new Pose2d(FeildPosition.prepToPickSecondSample.position, FeildPosition.prepToPickSecondSample.heading);
-        Pose2d fourthPos = new Pose2d(FeildPosition.finishPickSecondSample.position, FeildPosition.finishPickSecondSample.heading);
+        Pose2d secondPos = new Pose2d(FieldPositions.scoreSample.position, FieldPositions.scoreSample.heading);
+        Pose2d thirdPos = new Pose2d(FieldPositions.prepToPickSecondSample.position, FieldPositions.prepToPickSecondSample.heading);
+        Pose2d fourthPos = new Pose2d(FieldPositions.finishPickSecondSample.position, FieldPositions.finishPickSecondSample.heading);
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
 
 
         TrajectoryActionBuilder scoreFirst = drive.actionBuilder(initialPose)
-                .strafeToSplineHeading(FeildPosition.scoreSample.position, FeildPosition.scoreSample.heading);
+                .strafeToSplineHeading(FieldPositions.scoreSample.position, FieldPositions.scoreSample.heading);
 
         TrajectoryActionBuilder grabSecondPrep = drive.actionBuilder(secondPos)
-                .strafeToSplineHeading(FeildPosition.prepToPickSecondSample.position, FeildPosition.prepToPickSecondSample.heading);
+                .strafeToSplineHeading(FieldPositions.prepToPickSecondSample.position, FieldPositions.prepToPickSecondSample.heading);
 
         TrajectoryActionBuilder grabSecond = drive.actionBuilder(thirdPos)
-                .strafeToSplineHeading(FeildPosition.finishPickSecondSample.position, FeildPosition.finishPickSecondSample.heading);
+                .strafeToSplineHeading(FieldPositions.finishPickSecondSample.position, FieldPositions.finishPickSecondSample.heading);
 
         TrajectoryActionBuilder scoreSecond = drive.actionBuilder(fourthPos)
-                .strafeToSplineHeading(FeildPosition.scoreSample.position, FeildPosition.scoreSample.heading);
+                .strafeToSplineHeading(FieldPositions.scoreSample.position, FieldPositions.scoreSample.heading);
 
 
         TrajectoryActionBuilder WaitScore = drive.actionBuilder(initialPose)

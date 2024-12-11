@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem_CC;
 import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 
 @Config
-@Autonomous(name = "Auto to Teleop Test", group = "Autonomous", preselectTeleOp = "MainDrive_CC")
+@Autonomous(name = "Auto to Teleop Test", group = "Autonomous", preselectTeleOp = "MainDrive_CC_after_Auto")
 
 public class Auto_to_Teleop_Test extends LinearOpMode {
 
@@ -40,6 +40,17 @@ public class Auto_to_Teleop_Test extends LinearOpMode {
         Pose2d initialPose = new Pose2d(32, 62, Math.toRadians(-90));
         MecanumDrive drive = new MecanumDrive(hardwareMap, initialPose);
 
+        TrajectoryActionBuilder scoreFirstTraj = drive.actionBuilder(initialPose)
+                .strafeToSplineHeading(FieldPositions.scoreSample.position, FieldPositions.scoreSample.heading);
+
+        Action scoreFirst = scoreFirstTraj.build();
+
+        Action turn_to_Zero = scoreFirstTraj.endTrajectory().fresh()
+                .turnTo(Math.toRadians(-90))
+                .build();
+
+
+
         int reqArmPos = 0, reqOutReq = 0;
 
 
@@ -49,21 +60,36 @@ public class Auto_to_Teleop_Test extends LinearOpMode {
 
         arm.resetArm();
         arm.resetOutArm();
+        arm.resetArmOffset();
 
         telemetry.update();
         waitForStart();
 
         if (isStopRequested()) return;
 
-        arm.autoArms();
-//reqArmPos, reqOutReq
+
         Actions.runBlocking(
-                drive.actionBuilder(initialPose)
-                        .strafeToSplineHeading(new Vector2d(45, 45), Math.toRadians(50))
-                        //.stopAndAdd(new arm.autoArms(DriveConstants.armOutSampleScoreHigh, DriveConstants.armOutSampleScoreHigh))
-                        .build()
 
+                    new ParallelAction( //Prep Score
+                            arm.setArmsAction(),
+                            new SequentialAction(
+                                   // new InstantAction(arm::startAuto),
+                                    new ParallelAction(
+                                        arm.setArmPosAction(DriveConstants.armSampleScoreHigh,DriveConstants.armOutSampleScoreHigh),
+                                        new InstantAction(claw::SetWristCenter),
+                                        scoreFirst
+                                    ),
+                                    new InstantAction(claw::grabberPlaceSlow),
+                                    new SleepAction(1),
+                                    new ParallelAction( //Prep Score
+                                            new InstantAction(claw::grabberStop),
+                                            arm.setArmPosAction(DriveConstants.armZero,DriveConstants.armOutZero),
+                                            turn_to_Zero
+                                    )
+                                    //new InstantAction(arm::stopAuto)
 
+                            )
+                    )
 
         );
     }

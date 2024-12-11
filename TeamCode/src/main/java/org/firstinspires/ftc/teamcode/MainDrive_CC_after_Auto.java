@@ -83,7 +83,7 @@ public class MainDrive_CC_after_Auto extends LinearOpMode {
         );
 
         drive.setReadType(); //Set Husky Cam to color mode
-        //arm.resetOutArm();
+        arm.resetArmOffset();
         rumble.reset();
 
 
@@ -114,7 +114,7 @@ public class MainDrive_CC_after_Auto extends LinearOpMode {
             updateTelemetry(drive.getDriveTelemetry());
             updateTelemetry(arm.getArmTelemetry());
 
-            CommandScheduler.getInstance().run();
+            //CommandScheduler.getInstance().run();
 
 
             //Speed Reduce
@@ -176,12 +176,13 @@ public class MainDrive_CC_after_Auto extends LinearOpMode {
             } else if (driver1.getButton(GamepadKeys.Button.RIGHT_BUMPER) || driver2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 claw.SetWristCenter();
             }
-
+            arm.setArmPositions(ReqArmPos,ReqOutPos);
             if(!Arm_Override_Active) {
                 //by putting this out of the state machine we don't accidentally forget to call this
                 // and send the arm into orbit because its still set to a constant power value instead
                 // of still checking against the PID controllers.
-                arm.setArms(ReqArmPos,ReqOutPos);
+
+                arm.setArms();
                 if(driver1.getButton(GamepadKeys.Button.DPAD_UP) || driver1.getButton(GamepadKeys.Button.DPAD_DOWN) || driver1.getButton(GamepadKeys.Button.A) || driver1.getButton(GamepadKeys.Button.Y)){
                     Arm_Override_Active = true;
                 }
@@ -217,8 +218,9 @@ public class MainDrive_CC_after_Auto extends LinearOpMode {
             else{
                 //have to call seperate arms because when overriding you want to be able to lift
                 //and lower arm regardless where the out arm is
-                arm.setArm(ReqArmPos);
-                arm.setOutArm(ReqOutPos);
+
+                arm.setArm();
+                arm.setOutArm();
 
                 if(driver1.getButton(GamepadKeys.Button.BACK)){
                     Arm_Override_Active = false;

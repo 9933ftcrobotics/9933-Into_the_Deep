@@ -33,10 +33,10 @@ public class armTest extends OpMode {
     public static double p = 0.0125, i = 0.06, d = 0.00075;
     public static double f = 0.08;
 
-    public static double out_p = 0, out_i = 0, out_d = 0;
+    public static double out_p = 0.004, out_i = 0, out_d = 0;
     //public static double f2 = 1;
 
-    public static int target = 0;
+    public static int target = 500;
     public static int outTarget = 0;
 
     private final double ticks_in_degree =  5281.1 / 360; //gobilda 30rpm encoder

@@ -59,7 +59,8 @@ public class Dry_Cycle_CC extends LinearOpMode {
             //by putting this out of the state machine we don't accidentally forget to call this
             // and send the arm into orbit because its still set to a constant power value instead
             // of still checking against the PID controllers.
-            arm.setArms(ReqArmPos,ReqOutPos);
+            arm.setArmPositions(ReqArmPos,ReqOutPos);
+            arm.setArms();
 
 
             TimeElapsed = timer.seconds() - prev_time;
