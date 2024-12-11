@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 
 @TeleOp
-public class MainDrive_CC extends LinearOpMode {
+public class MainDrive_CC_after_Auto extends LinearOpMode {
     boolean wristCenter = true;
 
 
@@ -29,7 +29,10 @@ public class MainDrive_CC extends LinearOpMode {
     // differences between them can be read here in the docs:
     // https://docs.ftclib.org/ftclib/features/drivebases#control-scheme
 
+    private static ElapsedTime timmer = new ElapsedTime();
     private static ElapsedTime rumble = new ElapsedTime();
+    private static ElapsedTime huskyTime = new ElapsedTime();
+    private static ElapsedTime reset = new ElapsedTime();
     boolean warning = false;
     boolean endGame = false;
 
@@ -43,7 +46,7 @@ public class MainDrive_CC extends LinearOpMode {
     double leftY, leftX, rightX;
 
     int ReqArmPos, ReqOutPos;
-    public static ArmSubsystem_CC arm;
+
     boolean Arm_Override_Active;
     boolean leftBumperPressed, modeSlow = false;
     double slow = 0.5; //Percentage of how slow the "slow" mode is.
@@ -65,7 +68,7 @@ public class MainDrive_CC extends LinearOpMode {
                 hardwareMap.get(HuskyLens.class, "huskyLens")
         );
 
-        arm = new ArmSubsystem_CC(
+        ArmSubsystem_CC arm = new ArmSubsystem_CC(
                 new Motor(hardwareMap, "arm", Motor.GoBILDA.RPM_312),
                 new Motor(hardwareMap, "outArm", Motor.GoBILDA.RPM_312),
                 new Motor(hardwareMap, "armEnc", Motor.GoBILDA.RPM_312)
@@ -75,11 +78,11 @@ public class MainDrive_CC extends LinearOpMode {
                 new CRServo(hardwareMap, "grabber"),
                 new SimpleServo(hardwareMap, "wrist", 0,1)
         );
-        //CameraSubsystem camera = new CameraSubsystem( );
+        CameraSubsystem camera = new CameraSubsystem(
 
-        //drive.setReadType();
-        arm.resetArm();
-        arm.resetOutArm();
+        );
+
+        drive.setReadType(); //Set Husky Cam to color mode
         arm.resetArmOffset();
         rumble.reset();
 
@@ -127,6 +130,31 @@ public class MainDrive_CC extends LinearOpMode {
             if (!driver1.getButton(GamepadKeys.Button.LEFT_BUMPER) && !driver2.getButton(GamepadKeys.Button.LEFT_BUMPER) ) {
                 leftBumperPressed = false;
             }
+
+
+
+            /*
+            if (driver1.getButton(GamepadKeys.Button.Y) && YIsPressed == false || driver2.getButton(GamepadKeys.Button.Y) && YIsPressed == false) {
+                telemetry.addLine("Y is pressed");
+                if (sampleScoring == true) {
+                    sampleScoring = false;
+                    telemetry.addLine("sampleScoring is true. Changing to false");
+                } else if (sampleScoring == false) {
+                    sampleScoring = true;
+                    telemetry.addLine("sampleScoring is false. Changing to true");
+                }
+                YIsPressed = true;
+            }
+
+            if (!driver1.getButton(GamepadKeys.Button.Y) && !driver2.getButton(GamepadKeys.Button.Y) ) {
+                YIsPressed = false;
+            }*/
+
+
+
+
+
+
 
             if (driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.075) {
                 claw.grabberPlaceToPower(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
