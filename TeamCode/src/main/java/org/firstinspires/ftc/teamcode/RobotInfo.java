@@ -11,5 +11,7 @@ public class RobotInfo {
     public static int armOffset;
     public static boolean arminitialized;
 
+    public static boolean PrevAuto;
+
 
 }

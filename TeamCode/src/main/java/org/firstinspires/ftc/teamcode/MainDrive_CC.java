@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.RevIMU;
@@ -14,10 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.System_Constants.DriveConstants;
+import org.firstinspires.ftc.teamcode.System_Constants.SpecimenConstants;
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem_CC;
-import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SpecimenSubsystem;
 
 @TeleOp
 public class MainDrive_CC extends LinearOpMode {
@@ -33,21 +34,16 @@ public class MainDrive_CC extends LinearOpMode {
     boolean warning = false;
     boolean endGame = false;
 
-    static final boolean FIELD_CENTRIC = true;
-    boolean grabberMove = false;
-
-    boolean sampleScoring = true; //true = sample false = specimin
-
-    boolean YIsPressed = false;
-
     double leftY, leftX, rightX;
 
-    int ReqArmPos, ReqOutPos;
+    int ReqArmPos, ReqOutPos, ReqLeftArmPos, ReqRightArmPos;
     public static ArmSubsystem_CC arm;
     boolean Arm_Override_Active;
-    boolean leftBumperPressed, modeSlow = false;
+    boolean Clipping;
+    boolean Climbing;
+    boolean leftBumperPressed, modeSlow, modeSlow_for_Specimen;
     double slow = 0.5; //Percentage of how slow the "slow" mode is.
-
+    double speed;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -68,19 +64,35 @@ public class MainDrive_CC extends LinearOpMode {
         arm = new ArmSubsystem_CC(
                 new Motor(hardwareMap, "arm", Motor.GoBILDA.RPM_312),
                 new Motor(hardwareMap, "outArm", Motor.GoBILDA.RPM_312),
-                new Motor(hardwareMap, "armEnc", Motor.GoBILDA.RPM_312)
+                new Motor(hardwareMap, "rightRear", Motor.GoBILDA.RPM_312)
         );
 
         ClawSubsystem claw = new ClawSubsystem(
                 new CRServo(hardwareMap, "grabber"),
                 new SimpleServo(hardwareMap, "wrist", 0,1)
         );
+
+        SpecimenSubsystem specimenSubsystem = new SpecimenSubsystem(
+                new Motor(hardwareMap, "leftClimb", Motor.GoBILDA.RPM_30),
+                new Motor(hardwareMap, "rightClimb", Motor.GoBILDA.RPM_30),
+                new SimpleServo(hardwareMap, "leftPick", 0,1),
+                new SimpleServo(hardwareMap, "rightPick", 0,1));
+
         //CameraSubsystem camera = new CameraSubsystem( );
 
         //drive.setReadType();
-        arm.resetArm();
-        arm.resetOutArm();
-        arm.resetArmOffset();
+        if(!RobotInfo.PrevAuto) {
+            arm.resetArm();
+            arm.resetOutArm();
+            arm.resetArmOffset();
+            specimenSubsystem.resetArms();
+        }
+
+        //Tell the robot that the last thing we did was not Auto so most likely next time we're
+        // starting with arms from store position
+        RobotInfo.PrevAuto = false;
+
+
         rumble.reset();
 
 
@@ -91,6 +103,8 @@ public class MainDrive_CC extends LinearOpMode {
         ReqArmPos = DriveConstants.armSampleRest;
         ReqOutPos = DriveConstants.armOutSampleRest;
 
+        ReqLeftArmPos = SpecimenConstants.SpecimenRest;
+
         waitForStart();
         //camera.initAprilTag();
 
@@ -100,22 +114,28 @@ public class MainDrive_CC extends LinearOpMode {
             leftY = driver1.getLeftY();
 
 
-            if (!modeSlow) {
-                drive.drive(leftX, leftY, rightX, true);
-            } else if (modeSlow) {
-                drive.drive(leftX * slow, leftY * slow, rightX * slow, true);
+            if (!modeSlow && !modeSlow_for_Specimen) {
+                speed = 1;
+            } else {
+                speed = slow;
             }
 
-            drive.getCurrentPose();
+            drive.drive(leftX * speed, leftY * speed, rightX * speed, true);
+
+
+            //drive.getCurrentPose();
 
             updateTelemetry(drive.getDriveTelemetry());
             updateTelemetry(arm.getArmTelemetry());
+            updateTelemetry(specimenSubsystem.getArmTelemetry());
 
+            //When this CommandScheduler was enabled it slowly made
+            // the arm PID worse, like we were building up garbage every time we ran
             //CommandScheduler.getInstance().run();
 
 
             //Speed Reduce
-            if (driver1.getButton(GamepadKeys.Button.LEFT_BUMPER) && leftBumperPressed == false || driver2.getButton(GamepadKeys.Button.LEFT_BUMPER) && leftBumperPressed == false) {
+            if (driver1.getButton(GamepadKeys.Button.LEFT_BUMPER) && leftBumperPressed == false) {
                 if (modeSlow == true) {
                     modeSlow = false;
                 } else if (modeSlow == false) {
@@ -141,11 +161,55 @@ public class MainDrive_CC extends LinearOpMode {
             }
 
 
+            specimenSubsystem.setArms();
+            specimenSubsystem.setBothArmsPosition(ReqLeftArmPos,ReqRightArmPos);
+
+            if(driver2.getButton(GamepadKeys.Button.B)){
+                ReqLeftArmPos = SpecimenConstants.SpecimenPick;
+                modeSlow_for_Specimen = true;
+                Clipping = false;
+                Climbing = false;
+            }
+            else if(driver2.getButton(GamepadKeys.Button.A)){
+                ReqLeftArmPos = 0;
+                Clipping = false;
+                Climbing = false;
+            }
+            else if(driver2.getButton(GamepadKeys.Button.Y)){
+                ReqLeftArmPos = SpecimenConstants.SpecimenDeliver;
+                Clipping = true;
+                Climbing = false;
+            }
+            else if(driver2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
+                Clipping = false;
+                Climbing = true;
+                ReqLeftArmPos = SpecimenConstants.Raise_arm_to_Climb_Left;
+                ReqRightArmPos = SpecimenConstants.Raise_arm_to_Climb_Right;
+            }
+            else{
+                ReqRightArmPos = SpecimenConstants.Lower_arm_to_Climb;
+                if(!Clipping && !Climbing) {
+                    ReqLeftArmPos = SpecimenConstants.SpecimenRest;
+                } else if(Climbing){
+                    ReqLeftArmPos = SpecimenConstants.Lower_arm_to_Climb;
+                }
+                else{
+                    ReqLeftArmPos = SpecimenConstants.SpecimenClip;
+                }
+                modeSlow_for_Specimen = false;
+            }
+
+            if(driver2.getButton(GamepadKeys.Button.LEFT_BUMPER)){
+                specimenSubsystem.specimenClawClose();
+            }
+            else{
+                specimenSubsystem.specimenClawOpen();
+            }
 
 
-            if (driver1.getButton(GamepadKeys.Button.X) || (driver2.getButton(GamepadKeys.Button.X))) {
+            if (driver1.getButton(GamepadKeys.Button.X)) {
                 claw.SetWristLeft();
-            } else if (driver1.getButton(GamepadKeys.Button.RIGHT_BUMPER) || driver2.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+            } else if (driver1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 claw.SetWristCenter();
             }
             arm.setArmPositions(ReqArmPos,ReqOutPos);
@@ -169,21 +233,17 @@ public class MainDrive_CC extends LinearOpMode {
                     claw.grabberPick();
                     modeSlow = false;
                 }
-                else if (driver2.getButton(GamepadKeys.Button.A)) {
+                else if (driver2.getButton(GamepadKeys.Button.DPAD_LEFT)) {
                     ReqArmPos = DriveConstants.armSamplePick;
                     ReqOutPos = DriveConstants.armOutSamplePick;
                     claw.grabberPick();
                     modeSlow = false;
                 }
-                else if (driver2.getButton(GamepadKeys.Button.Y)) {
-                    ReqArmPos = DriveConstants.armSpecimenClip;
-                    ReqOutPos = DriveConstants.armOutSpecimenClip;
-                    //claw.grabberPick();
-                    modeSlow = true;
-                }
+
                 else {
                     ReqArmPos = DriveConstants.armSampleRest;
                     ReqOutPos = DriveConstants.armOutSampleRest;
+
                     modeSlow = false;
                 }
             }

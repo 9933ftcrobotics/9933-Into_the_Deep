@@ -9,10 +9,7 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.DriveConstants;
 import org.firstinspires.ftc.teamcode.RobotInfo;
 
 public class ArmSubsystem_CC extends SubsystemBase {
@@ -52,7 +49,7 @@ public class ArmSubsystem_CC extends SubsystemBase {
 
     public ArmSubsystem_CC(Motor arm, Motor outArm, Motor armEnc) {
         arm.setInverted(false);
-        armEnc.setInverted(true);
+        armEnc.setInverted(false);
         outArm.setInverted(true);
         this.arm = arm;
         this.outArm = outArm;
