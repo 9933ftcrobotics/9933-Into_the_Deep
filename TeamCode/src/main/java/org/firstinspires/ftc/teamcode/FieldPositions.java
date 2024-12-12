@@ -8,10 +8,10 @@ public class FieldPositions {
     public static Pose2d prepToPickSecondSample = new Pose2d(27.75, 35.5,Math.toRadians(-26.5));
     public static Pose2d finishPickSecondSample = new Pose2d(32.75, 32.5,Math.toRadians(-26.5));
     public static Pose2d scoreSample = new Pose2d(51, 47,Math.toRadians(50));
-    Pose2d prepToPickThirdSample = new Pose2d(37.6, 23.25,Math.toRadians(0));
-    Pose2d finishPickThirdSample = new Pose2d(43, 23.25,Math.toRadians(0));
-    Pose2d prepToPickFourthSample = new Pose2d(46.7, 23.25,Math.toRadians(0));
-    Pose2d finishPickFourthSample = new Pose2d(51.8, 23.25,Math.toRadians(0));
+    public static Pose2d prepToPickThirdSample = new Pose2d(37.6, 23.25,Math.toRadians(0));
+    public static Pose2d finishPickThirdSample = new Pose2d(43, 23.25,Math.toRadians(0));
+    public static Pose2d prepToPickFourthSample = new Pose2d(46.7, 23.25,Math.toRadians(0));
+    public static Pose2d finishPickFourthSample = new Pose2d(51.8, 23.25,Math.toRadians(0));
 
     Pose2d prepPushFirstSpecimen = new Pose2d(-33.5, 20,Math.toRadians(-90));
     Pose2d startPushFirstSpecimen = new Pose2d(-45, 10,Math.toRadians(-90));
