@@ -84,6 +84,18 @@ public class SpecimenSubsystem extends SubsystemBase {
         rightPick.setPosition(SpecimenConstants.RightClawRelease);
     }
 
+    public void specimenClawGrip(double Amount) {
+
+        leftPick.setPosition(SpecimenConstants.LeftClawGrab*Amount);
+        rightPick.setPosition(SpecimenConstants.RightClawGrab*Amount);
+    }
+
+    public void specimenClawClimb() {
+
+        leftPick.setPosition(SpecimenConstants.LeftClawClimb);
+        rightPick.setPosition(SpecimenConstants.RightClawClimb);
+    }
+
     public Action setLeftArmPosAction(int ReqArmTarget_In) {
 
         return new Action() {

@@ -39,6 +39,7 @@ public class MainDrive_CC extends LinearOpMode {
     int ReqArmPos, ReqOutPos, ReqLeftArmPos, ReqRightArmPos;
     public static ArmSubsystem_CC arm;
     boolean Arm_Override_Active;
+    boolean Climb_Arms_Override_Active;
     boolean Clipping;
     boolean Climbing;
     boolean leftBumperPressed, modeSlow, modeSlow_for_Specimen;
@@ -150,60 +151,91 @@ public class MainDrive_CC extends LinearOpMode {
 
             if (driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.075) {
                 claw.grabberPlaceToPower(driver1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-            } else if (driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0.075) {
-                claw.grabberPlaceToPower(driver2.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
-            } else if (driver1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.075) {
+            }  else if (driver1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.075) {
                 claw.grabberPlaceToPower(-driver1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-            } else if (driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.075) {
-                claw.grabberPlaceToPower(-driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
-            } else if (!driver2.getButton(GamepadKeys.Button.A) && !driver2.getButton(GamepadKeys.Button.DPAD_DOWN)){
+            }  else if (!driver2.getButton(GamepadKeys.Button.A) && !driver2.getButton(GamepadKeys.Button.DPAD_DOWN)){
                 claw.grabberStop();
             }
 
 
             specimenSubsystem.setArms();
             specimenSubsystem.setBothArmsPosition(ReqLeftArmPos,ReqRightArmPos);
-
-            if(driver2.getButton(GamepadKeys.Button.B)){
-                ReqLeftArmPos = SpecimenConstants.SpecimenPick;
-                modeSlow_for_Specimen = true;
-                Clipping = false;
-                Climbing = false;
-            }
-            else if(driver2.getButton(GamepadKeys.Button.A)){
-                ReqLeftArmPos = 0;
-                Clipping = false;
-                Climbing = false;
-            }
-            else if(driver2.getButton(GamepadKeys.Button.Y)){
-                ReqLeftArmPos = SpecimenConstants.SpecimenDeliver;
-                Clipping = true;
-                Climbing = false;
-            }
-            else if(driver2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)){
-                Clipping = false;
-                Climbing = true;
-                ReqLeftArmPos = SpecimenConstants.Raise_arm_to_Climb_Left;
-                ReqRightArmPos = SpecimenConstants.Raise_arm_to_Climb_Right;
-            }
-            else{
-                ReqRightArmPos = SpecimenConstants.Lower_arm_to_Climb;
-                if(!Clipping && !Climbing) {
-                    ReqLeftArmPos = SpecimenConstants.SpecimenRest;
-                } else if(Climbing){
-                    ReqLeftArmPos = SpecimenConstants.Lower_arm_to_Climb;
+            if(!Climb_Arms_Override_Active) {
+                if((driver2.getLeftY()<-0.75) || (driver2.getLeftY()>0.75)|| (driver2.getRightY()<-0.75) || (driver2.getRightY()>0.75)){
+                    Climb_Arms_Override_Active = true;
                 }
-                else{
-                    ReqLeftArmPos = SpecimenConstants.SpecimenClip;
+                else if (driver2.getButton(GamepadKeys.Button.B)) {
+                    ReqLeftArmPos = SpecimenConstants.SpecimenPick;
+                    modeSlow_for_Specimen = true;
+                    Clipping = false;
+                    Climbing = false;
+                } else if (driver2.getButton(GamepadKeys.Button.A)) {
+                    ReqLeftArmPos = 0;
+                    Clipping = false;
+                    Climbing = false;
+                } else if (driver2.getButton(GamepadKeys.Button.Y)) {
+                    ReqLeftArmPos = SpecimenConstants.SpecimenDeliver;
+                    Clipping = true;
+                    Climbing = false;
+                } else if (driver2.getButton(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+                    Clipping = false;
+                    Climbing = true;
+
+                    ReqLeftArmPos = SpecimenConstants.Raise_arm_to_Climb_Left;
+                    ReqRightArmPos = SpecimenConstants.Raise_arm_to_Climb_Right;
+                } else {
+                    ReqRightArmPos = SpecimenConstants.Lower_arm_to_Climb;
+                    if (!Clipping && !Climbing) {
+                        ReqLeftArmPos = SpecimenConstants.SpecimenRest;
+                    } else if (Climbing) {
+                        ReqLeftArmPos = SpecimenConstants.Lower_arm_to_Climb;
+                    } else {
+                        ReqLeftArmPos = SpecimenConstants.SpecimenClip;
+                    }
+                    modeSlow_for_Specimen = false;
                 }
-                modeSlow_for_Specimen = false;
+            }
+            else {
+                //telemetry.addData("LeftY", driver2.getLeftY());
+                //telemetry.addData("RightY", driver2.getRightY());
+
+                //By the way, apparently LeftY is positive up, and RightY is positive down...
+                if(driver2.getLeftY()>0.75){
+                    ReqLeftArmPos = ReqLeftArmPos + 25;
+                }
+                if(driver2.getLeftY()<-0.75){
+                    ReqLeftArmPos = ReqLeftArmPos - 25;
+                }
+
+                if(driver2.getRightY()>0.75){
+                    ReqRightArmPos = ReqRightArmPos - 25;
+                }
+                if(driver2.getRightY()<-0.75){
+                    ReqRightArmPos = ReqRightArmPos + 25;
+                }
+
+                if(driver2.getButton(GamepadKeys.Button.BACK)){
+                    Climb_Arms_Override_Active = false;
+                }
+
+                if(driver2.getButton(GamepadKeys.Button.START)){
+                    Climb_Arms_Override_Active = false;
+                    specimenSubsystem.resetArms();
+                }
+
+
+
             }
 
-            if(driver2.getButton(GamepadKeys.Button.LEFT_BUMPER)){
+            //telemetry.addData("Left Trigger", driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER));
+            if(driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0.5){
                 specimenSubsystem.specimenClawClose();
             }
+            else if(Climbing){
+                specimenSubsystem.specimenClawClimb();
+            }
             else{
-                specimenSubsystem.specimenClawOpen();
+                specimenSubsystem.specimenClawGrip(driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)*2);
             }
 
 
