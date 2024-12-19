@@ -162,7 +162,7 @@ public class MainDrive_CC extends LinearOpMode {
 
 
             specimenSubsystem.setArms();
-            specimenSubsystem.setBothArmsPosition(ReqLeftArmPos,ReqRightArmPos);
+            //specimenSubsystem.setBothArmsPosition(ReqLeftArmPos,ReqRightArmPos);
 
             if(driver2.getButton(GamepadKeys.Button.B)){
                 ReqLeftArmPos = SpecimenConstants.SpecimenPick;

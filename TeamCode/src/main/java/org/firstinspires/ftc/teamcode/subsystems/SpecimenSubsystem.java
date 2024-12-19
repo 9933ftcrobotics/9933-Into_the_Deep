@@ -37,13 +37,14 @@ public class SpecimenSubsystem extends SubsystemBase {
     public SpecimenSubsystem(Motor leftClimb, Motor rightClimb, ServoEx leftPick, ServoEx rightPick) {
         leftClimb.setInverted(true);
         leftPick.setInverted(true);
-        this.leftClimb = leftClimb;
+        //this.leftClimb = leftClimb;
         this.rightClimb = rightClimb;
         this.leftPick = leftPick;
         this.rightPick = rightPick;
         //leftClimb.resetEncoder();
         leftController = new PIDController(p,i,d);
         rightController = new PIDController(p,i,d);
+        //this.leftClimb.setRunMode(Motor.RunMode.PositionControl);
     }
 
     public void setArms() {
@@ -62,16 +63,17 @@ public class SpecimenSubsystem extends SubsystemBase {
 
     }
 
-    public void setLeftArmPosition(double leftClimbArmReqPos){
-        leftClimbtargetPos = leftClimbArmReqPos;
+    public void setLeftArmPosition(int leftClimbArmReqPos){
+        leftClimb.setTargetPosition(leftClimbArmReqPos);
+        leftClimb.set(1);
     }
     public void setRightArmPosition(double rightClimbArmReqPos){
         rightClimbtargetPos = rightClimbArmReqPos;
     }
-    public void setBothArmsPosition(double leftClimbArmReqPos, double rightClimbArmReqPos){
-        setLeftArmPosition(leftClimbArmReqPos);
-        setRightArmPosition(rightClimbArmReqPos);
-    }
+//    public void setBothArmsPosition(double leftClimbArmReqPos, double rightClimbArmReqPos){
+//        setLeftArmPosition(leftClimbArmReqPos);
+//        setRightArmPosition(rightClimbArmReqPos);
+//    }
     public void specimenClawClose() {
 
         leftPick.setPosition(SpecimenConstants.LeftClawGrab);
