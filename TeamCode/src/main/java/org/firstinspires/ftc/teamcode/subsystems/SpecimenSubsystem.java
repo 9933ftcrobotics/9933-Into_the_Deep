@@ -12,6 +12,7 @@ import com.arcrobotics.ftclib.hardware.ServoEx;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.teamcode.RobotInfo;
+import org.firstinspires.ftc.teamcode.System_Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.System_Constants.SpecimenConstants;
 
 public class SpecimenSubsystem extends SubsystemBase {
@@ -41,7 +42,7 @@ public class SpecimenSubsystem extends SubsystemBase {
         this.rightClimb = rightClimb;
         this.leftPick = leftPick;
         this.rightPick = rightPick;
-        //leftClimb.resetEncoder();
+        leftClimb.resetEncoder();
         leftController = new PIDController(p,i,d);
         rightController = new PIDController(p,i,d);
     }
@@ -135,6 +136,48 @@ public class SpecimenSubsystem extends SubsystemBase {
                 return true;
             }
         };
+    }
+
+    public class SpecimenDeliver implements Action {
+        int Run = 0;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setLeftArmPosition(SpecimenConstants.SpecimenDeliver);
+            setArms();
+            Run = Run + 1;
+            return Run < 200;
+        }
+    }
+    public Action deliverSpecimen() {
+        return new SpecimenSubsystem.SpecimenDeliver();
+    }
+
+    public class SpecimenScore implements Action {
+        int Run = 0;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setLeftArmPosition(SpecimenConstants.SpecimenClip);
+            setArms();
+            Run = Run + 1;
+            return Run < 200;
+        }
+    }
+    public Action scoreSpecimen() {
+        return new SpecimenSubsystem.SpecimenScore();
+    }
+
+    public class LeftArmDown implements Action {
+        int Run = 0;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            setLeftArmPosition(0);
+            setArms();
+            Run = Run + 1;
+            return Run < 200;
+        }
+    }
+    public Action lowerLeftArm() {
+        return new SpecimenSubsystem.LeftArmDown();
     }
 
     public void leftServoClose() {

@@ -45,7 +45,7 @@ public class OfficialRedLeftAuto extends LinearOpMode {
 
         Pose2d initialPose = new Pose2d(32, 62, Math.toRadians(-90));
         Pose2d finishScorePos = new Pose2d(45, 45, Math.toRadians(50));
-        Pose2d afterScorePos = new Pose2d(52, 51, Math.toRadians(50));
+        Pose2d afterScorePos = new Pose2d(50, 50, Math.toRadians(50));
         Pose2d afterFirstScorePos = new Pose2d(34, 22, Math.toRadians(0));
         Pose2d pickFirstFinishPos = new Pose2d(35, 37, Math.toRadians(0));
         Pose2d prepSecondScorePos = new Pose2d(38, 22, Math.toRadians(0));
@@ -67,47 +67,47 @@ public class OfficialRedLeftAuto extends LinearOpMode {
 
 
         TrajectoryActionBuilder FinishScoreOne = drive.actionBuilder(finishScorePos)
-                .strafeToSplineHeading(new Vector2d(53, 51), Math.toRadians(50));
+                .strafeToSplineHeading(new Vector2d(56.8, 51.7), Math.toRadians(50));
 
 
         TrajectoryActionBuilder PickFirst = drive.actionBuilder(afterScorePos)
                 //.strafeToSplineHeading(new Vector2d(35, 37), Math.toRadians(0))
                 //TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(pickFirstFinishPos)
                 //.strafeTo(new Vector2d(35, 25));
-                .strafeToSplineHeading(new Vector2d(33.5, 22), Math.toRadians(0))
-                .strafeToSplineHeading(new Vector2d(35.5, 22), Math.toRadians(0));
+                //.strafeToSplineHeading(new Vector2d(33.5, 22), Math.toRadians(0))
+                .strafeToSplineHeading(new Vector2d(31.5, 20.5), Math.toRadians(0));
         TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(afterFirstScorePos)
                 //.strafeToSplineHeading(new Vector2d(35, 37), Math.toRadians(0))
                 //TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(pickFirstFinishPos)
                 //.strafeTo(new Vector2d(35, 25));
-                .strafeToSplineHeading(new Vector2d(40, 22), Math.toRadians(0));
+                .strafeToSplineHeading(new Vector2d(35.5, 20.5), Math.toRadians(0));
 
 
         TrajectoryActionBuilder PrepSecondScore = drive.actionBuilder(prepSecondScorePos)
                 .strafeToSplineHeading(new Vector2d(45, 45), Math.toRadians(50));
 
         TrajectoryActionBuilder SecondScore = drive.actionBuilder(SecondScorePos)
-                .strafeToSplineHeading(new Vector2d(54, 52.9), Math.toRadians(50));
+                .strafeToSplineHeading(new Vector2d(54.4, 48.6), Math.toRadians(50));
 
 
         TrajectoryActionBuilder Finish = drive.actionBuilder(finishPos)
-                .strafeToSplineHeading(new Vector2d(40, 40), Math.toRadians(-90));
+                .strafeToSplineHeading(new Vector2d(40, 40), Math.toRadians(-95));
 
 
         TrajectoryActionBuilder GrabThird = drive.actionBuilder(grabThirdPos)
-                .strafeToSplineHeading(new Vector2d(42, 22), Math.toRadians(0));
+                .strafeToSplineHeading(new Vector2d(44.5, 21.5), Math.toRadians(0));
         TrajectoryActionBuilder PickThirdFinish = drive.actionBuilder(grabThirdFinishPos)
                 //.strafeToSplineHeading(new Vector2d(35, 37), Math.toRadians(0))
                 //TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(pickFirstFinishPos)
                 //.strafeTo(new Vector2d(35, 25));
-                .strafeToSplineHeading(new Vector2d(50, 22), Math.toRadians(0));
+                .strafeToSplineHeading(new Vector2d(46.5, 21.5), Math.toRadians(0));
 
 
         TrajectoryActionBuilder PrepThirdScore = drive.actionBuilder(prepThirdScorePos)
                 .strafeToSplineHeading(new Vector2d(45, 45), Math.toRadians(50));
 
         TrajectoryActionBuilder ThirdScore = drive.actionBuilder(ThirdScorePos)
-                .strafeToSplineHeading(new Vector2d(52.2, 52.2), Math.toRadians(50));
+                .strafeToSplineHeading(new Vector2d(50.2, 50.2), Math.toRadians(50));
 
         TrajectoryActionBuilder PickFourth = drive.actionBuilder(pickFourthPos)
                 .strafeToSplineHeading(new Vector2d(52, 24), Math.toRadians(0));
@@ -191,13 +191,19 @@ public class OfficialRedLeftAuto extends LinearOpMode {
 
                         new ParallelAction( //Drive to second
                                 arm.outRest(),
-                                arm.upRest(),
+                                arm.upPickFar(),
                                 pickFirst
+                        ),
+                        new ParallelAction(
+                                new InstantAction(claw::grabberPick),
+                                pickFirstFinish,
+                                arm.upPickFar(),
+                                arm.outPickFar()
                         ),
                         new ParallelAction( //Pick second
                                 new InstantAction(claw::grabberPick),
-                                arm.outPickFar(),
-                                arm.upPickFar()
+                                arm.upPickFar(),
+                                arm.outPickFar()
                         ),
                         /*new ParallelAction( //Pick second
                                 new InstantAction(claw::grabberPick),
@@ -245,20 +251,20 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                         new InstantAction(claw::grabberPick),
                         new ParallelAction( //Drive to third
                                 arm.outRest(),
-                                arm.upRest(),
+                                arm.upPickFar(),
                                 grabThird
                         ),
                         new ParallelAction( //Pick third
-                                //new InstantAction(claw::grabberPick),
-                                arm.outPick(),
-                                arm.upPick(),
+                                new InstantAction(claw::grabberPick),
+                                arm.outPickFar(),
+                                arm.upPickFar(),
                                 grabThirdFinish
                                 //waitPick
                         ),
                         waitPick,
                         new ParallelAction( //Pick third
-                                arm.outPick(),
-                                arm.upPick(),
+                                arm.outPickFar(),
+                                arm.upPickFar(),
                                 waitPick
                         ),
                         new ParallelAction( //Drive to finish score third
@@ -284,9 +290,9 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                                 arm.outPick(),
                                 arm.upHigh()
                         ),
-                        new InstantAction(claw::grabberPick),
-                        waitPick,
-                        new ParallelAction( //drive to fourth
+                        //new InstantAction(claw::grabberPick),
+                        //waitPick,
+                        /*new ParallelAction( //drive to fourth
                                 arm.outRest(),
                                 arm.upRest(),
                                 fourthPick
@@ -322,7 +328,7 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                                 new InstantAction(claw::grabberStop),
                                 arm.outRest(),
                                 arm.upHigh()
-                        ),
+                        ),*/
 
                         new ParallelAction(//Finish
                                 finish,

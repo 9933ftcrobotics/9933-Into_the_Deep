@@ -55,23 +55,23 @@ public class ClawSubsystem extends SubsystemBase {
 
 
     public void SetWristCenter() {
-        wrist.setPosition(0);
-    }
-
-    public void SetWristLeft() {
         wrist.setPosition(0.3);
     }
 
-    public void SetWristRight() { wrist.setPosition(0.3); }
+    public void SetWristLeft() {
+        wrist.setPosition(0.6);
+    }
+
+    public void SetWristRight() { wrist.setPosition(0); }
 
 
     public Action SetWristCenterAuto() {
-        wrist.setPosition(0);
+        wrist.setPosition(0.3);
         return SetWristCenterAuto();
     }
 
     public Action SetWristRightAuto() {
-        wrist.setPosition(0.3);
+        wrist.setPosition(0);
         return SetWristRightAuto();
     }
 

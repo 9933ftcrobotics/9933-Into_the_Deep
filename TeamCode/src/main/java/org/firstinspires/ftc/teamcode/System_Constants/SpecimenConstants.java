@@ -9,8 +9,8 @@ public class SpecimenConstants {
 
     public static int SpecimenPick = 600;
     public static int SpecimenRest = 900;
-    public static int SpecimenDeliver = 2400;
-    public static int SpecimenClip = SpecimenDeliver - 500;
+    public static int SpecimenDeliver = 3375;
+    public static int SpecimenClip = 1400;//SpecimenDeliver - 800;
     public static int Raise_arm_to_Climb_Left = 4031;
     public static int Raise_arm_to_Climb_Right = 4290;
     public static int Lower_arm_to_Climb = 0;

@@ -238,12 +238,13 @@ public class MainDrive_CC extends LinearOpMode {
                 specimenSubsystem.specimenClawGrip(driver2.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER)*2);
             }
 
+//           TODO: uncomment if need be
 
-            if (driver1.getButton(GamepadKeys.Button.X)) {
-                claw.SetWristLeft();
-            } else if (driver1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
+//            if (driver1.getButton(GamepadKeys.Button.X)) {
+//                claw.SetWristLeft();
+//            } else if (driver1.getButton(GamepadKeys.Button.RIGHT_BUMPER)) {
                 claw.SetWristCenter();
-            }
+//            }
             arm.setArmPositions(ReqArmPos,ReqOutPos);
             if(!Arm_Override_Active) {
                 //by putting this out of the state machine we don't accidentally forget to call this
