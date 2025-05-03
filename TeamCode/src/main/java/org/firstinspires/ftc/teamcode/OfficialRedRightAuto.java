@@ -79,8 +79,8 @@ public class OfficialRedRightAuto extends LinearOpMode {
                 .strafeToSplineHeading(new Vector2d(-45, 57), Math.toRadians(-90))
                 .strafeToSplineHeading(new Vector2d(-45, 12), Math.toRadians(-90))
                 .strafeToSplineHeading(new Vector2d(-55, 12), Math.toRadians(-90))
-                .strafeToSplineHeading(new Vector2d(-55, 57), Math.toRadians(-90))
-                .strafeToSplineHeading(new Vector2d(-55, 36), Math.toRadians(-90));
+                .strafeToSplineHeading(new Vector2d(-55, 57), Math.toRadians(-90));
+                //.strafeToSplineHeading(new Vector2d(-55, 36), Math.toRadians(-90));
         /*TrajectoryActionBuilder GetToSample = drive.actionBuilder(finishScorePos)
                 .strafeToSplineHeading(new Vector2d(-35, 42), Math.toRadians(180))
                 .strafeToSplineHeading(new Vector2d(-30, 10), Math.toRadians(180))

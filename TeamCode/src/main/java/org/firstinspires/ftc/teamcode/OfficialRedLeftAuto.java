@@ -87,11 +87,11 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                 .strafeToSplineHeading(new Vector2d(45, 45), Math.toRadians(50));
 
         TrajectoryActionBuilder SecondScore = drive.actionBuilder(SecondScorePos)
-                .strafeToSplineHeading(new Vector2d(54.4, 48.6), Math.toRadians(50));
+                .strafeToSplineHeading(new Vector2d(56.4, 50.6), Math.toRadians(50));
 
 
         TrajectoryActionBuilder Finish = drive.actionBuilder(finishPos)
-                .strafeToSplineHeading(new Vector2d(40, 40), Math.toRadians(-95));
+                .strafeToSplineHeading(new Vector2d(40, 40), Math.toRadians(-100));
 
 
         TrajectoryActionBuilder GrabThird = drive.actionBuilder(grabThirdPos)
@@ -107,7 +107,7 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                 .strafeToSplineHeading(new Vector2d(45, 45), Math.toRadians(50));
 
         TrajectoryActionBuilder ThirdScore = drive.actionBuilder(ThirdScorePos)
-                .strafeToSplineHeading(new Vector2d(50.2, 50.2), Math.toRadians(50));
+                .strafeToSplineHeading(new Vector2d(51.7, 52.7), Math.toRadians(50));
 
         TrajectoryActionBuilder PickFourth = drive.actionBuilder(pickFourthPos)
                 .strafeToSplineHeading(new Vector2d(52, 24), Math.toRadians(0));

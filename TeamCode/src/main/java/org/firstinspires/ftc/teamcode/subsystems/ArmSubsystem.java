@@ -190,7 +190,7 @@ public class ArmSubsystem extends SubsystemBase {
         int Run = 0;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            setArm(DriveConstants.armSampleScoreHigh);
+            setArm(DriveConstants.armSampleScoreHighAuto);
             Run = Run + 1;
             return !upArmInPos && Run < 70; //Time off?
         }
@@ -261,7 +261,7 @@ public class ArmSubsystem extends SubsystemBase {
         int Run = 0;
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            setOutArm(DriveConstants.armOutSampleScoreHigh);
+            setOutArm(DriveConstants.armOutSampleScoreHighAuto);
             Run = Run + 1;
             return !outArmInPos && Run < 120;
         }
