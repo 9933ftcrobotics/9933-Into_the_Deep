@@ -28,7 +28,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
 @Autonomous(name = "Official BLUE LEFT Auto", group = "Autonomous")
-
+@Disabled
 public class OfficialBlueLeftAuto extends LinearOpMode {
 
 

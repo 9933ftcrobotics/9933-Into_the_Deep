@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -15,21 +13,15 @@ import com.arcrobotics.ftclib.hardware.SimpleServo;
 import com.arcrobotics.ftclib.hardware.motors.CRServo;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
+
 import org.firstinspires.ftc.teamcode.subsystems.ArmSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-
 @Config
-@Autonomous(name = "Official RED LEFT Auto", group = "Autonomous")
+@Autonomous(name = "Official BLUE LEFT Auto", group = "Autonomous")
 
-public class OfficialRedLeftAuto extends LinearOpMode {
+public class GirlsCompBlueLeftAuto extends LinearOpMode {
 
 
     @Override
@@ -69,15 +61,13 @@ public class OfficialRedLeftAuto extends LinearOpMode {
         TrajectoryActionBuilder FinishScoreOne = drive.actionBuilder(finishScorePos)
                 .strafeToSplineHeading(new Vector2d(58.3, 53.2), Math.toRadians(50));
 
-        TrajectoryActionBuilder ApproachPickFirst = drive.actionBuilder(afterScorePos)
-                .strafeToSplineHeading(new Vector2d(31.5, 25), Math.toRadians(0));
 
         TrajectoryActionBuilder PickFirst = drive.actionBuilder(afterScorePos)
                 //.strafeToSplineHeading(new Vector2d(35, 37), Math.toRadians(0))
                 //TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(pickFirstFinishPos)
                 //.strafeTo(new Vector2d(35, 25));
                 //.strafeToSplineHeading(new Vector2d(33.5, 22), Math.toRadians(0))
-                .strafeToSplineHeading(new Vector2d(31.5, 19.5), Math.toRadians(0));
+                .strafeToSplineHeading(new Vector2d(30, 19.5), Math.toRadians(0));
         TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(afterFirstScorePos)
                 //.strafeToSplineHeading(new Vector2d(35, 37), Math.toRadians(0))
                 //TrajectoryActionBuilder PickFirstFinish = drive.actionBuilder(pickFirstFinishPos)
@@ -136,7 +126,6 @@ public class OfficialRedLeftAuto extends LinearOpMode {
         Action prepFirstScoring = PrepFirstScore.build();
         Action finishScore = FinishScoreOne.build();
         Action pickFirst = PickFirst.build();
-        Action approachPickFirst = ApproachPickFirst.build();
         Action pickFirstFinish = PickFirstFinish.build();
         //Action pickFirstFinish = PickFirstFinish.build();
         Action prepSecondScore = PrepSecondScore.build();
@@ -191,11 +180,7 @@ public class OfficialRedLeftAuto extends LinearOpMode {
                                 arm.outRest(),
                                 arm.upHigh()
                         ),
-                        new ParallelAction( //Drive to second
-                                arm.outRest(),
-                                arm.upPickFar(),
-                                approachPickFirst
-                        ),
+
                         new ParallelAction( //Drive to second
                                 arm.outRest(),
                                 arm.upPickFar(),

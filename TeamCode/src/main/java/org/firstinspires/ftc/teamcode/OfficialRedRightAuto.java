@@ -67,7 +67,7 @@ public class OfficialRedRightAuto extends LinearOpMode {
                 .strafeToSplineHeading(new Vector2d(0, 36), Math.toRadians(180));
 
         TrajectoryActionBuilder FinishScore = drive.actionBuilder(startScorePos)
-                .strafeToSplineHeading(new Vector2d(0, 30), Math.toRadians(180));
+                .strafeToSplineHeading(new Vector2d(0, 27), Math.toRadians(180));
 
         TrajectoryActionBuilder ClearScore = drive.actionBuilder(finishScorePos)
                 .strafeToSplineHeading(new Vector2d(0, 45), Math.toRadians(180));
